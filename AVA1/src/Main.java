@@ -10,21 +10,28 @@ public class Main {
         usuario editor = new usuario("editor@empresa.com", "123", usuario.Perfil.EDITOR);
         usuario leitor = new usuario("leitor@empresa.com", "123", usuario.Perfil.LEITOR);
         
-        System.out.println("=== SISTEMA DE CONTROLE DE DOCUMENTOS ===");
+        limparTela();
+        exibirCabecalho();
         
         // Login
         if (fazerLogin(admin, editor, leitor)) {
             menuPrincipal();
         }
         
+        System.out.println("\n" + "=".repeat(50));
+        System.out.println("   Obrigado por usar o sistema! Até logo!");
+        System.out.println("=".repeat(50));
         scanner.close();
     }
     
     private static boolean fazerLogin(usuario admin, usuario editor, usuario leitor) {
-        System.out.println("\n--- LOGIN ---");
-        System.out.print("Email: ");
+        System.out.println("\n┌" + "─".repeat(48) + "┐");
+        System.out.println("│" + centralizarTexto("ACESSO AO SISTEMA", 48) + "│");
+        System.out.println("└" + "─".repeat(48) + "┘");
+        
+        System.out.print("\n Email: ");
         String email = scanner.nextLine();
-        System.out.print("Senha: ");
+        System.out.print(" Senha: ");
         String senha = scanner.nextLine();
         
         if (email.equals(admin.getEmail()) && senha.equals(admin.getSenha())) {
@@ -36,35 +43,44 @@ public class Main {
         }
         
         if (usuarioLogado != null) {
-            System.out.println("✅ Login realizado com sucesso!");
-            System.out.println("Bem-vindo, " + usuarioLogado.getPerfil());
+            System.out.println("\n Login realizado com sucesso!");
+            System.out.println(" Bem-vindo, " + usuarioLogado.getPerfil());
+            pausar();
             return true;
         } else {
-            System.out.println("❌ Email ou senha incorretos!");
+            System.out.println("\n Email ou senha incorretos!");
+            pausar();
             return false;
         }
     }
     
     private static void menuPrincipal() {
         while (true) {
-            System.out.println("\n=== MENU PRINCIPAL ===");
-            System.out.println("1. Listar documentos");
-            System.out.println("2. Ler documento");
+            limparTela();
+            System.out.println("┌" + "─".repeat(48) + "┐");
+            System.out.println("│" + centralizarTexto("MENU PRINCIPAL", 48) + "│");
+            System.out.println("│" + centralizarTexto("Usuário: " + usuarioLogado.getPerfil(), 48) + "│");
+            System.out.println("└" + "─".repeat(48) + "┘");
+            
+            System.out.println("\n [1] Listar documentos");
+            System.out.println(" [2] Ler documento");
             if (usuarioLogado.podeEditar()) {
-                System.out.println("3. Editar documento");
+                System.out.println("  [3] Editar documento");
             }
             if (usuarioLogado.podeAdministrar()) {
-                System.out.println("4. Deletar documento");
+                System.out.println("  [4] Deletar documento");
             }
-            System.out.println("0. Sair");
-            System.out.print("Escolha uma opção: ");
+            System.out.println(" [0] Sair");
+            System.out.print("\n Escolha uma opção: ");
             
             int opcao = scanner.nextInt();
             scanner.nextLine();
             
             switch (opcao) {
                 case 1:
+                    limparTela();
                     GerenciadorDocumentos.listarDocumentos(usuarioLogado);
+                    pausar();
                     break;
                 case 2:
                     lerDocumento();
@@ -73,43 +89,84 @@ public class Main {
                     if (usuarioLogado.podeEditar()) {
                         editarDocumento();
                     } else {
-                        System.out.println("❌ Você não tem permissão para editar!");
+                        System.out.println("\n Você não tem permissão para editar!");
+                        pausar();
                     }
                     break;
                 case 4:
                     if (usuarioLogado.podeAdministrar()) {
                         deletarDocumento();
                     } else {
-                        System.out.println("❌ Você não tem permissão para deletar!");
+                        System.out.println("\n Você não tem permissão para deletar!");
+                        pausar();
                     }
                     break;
                 case 0:
-                    System.out.println("Saindo do sistema...");
                     return;
                 default:
-                    System.out.println("Opção inválida!");
+                    System.out.println("\n Opção inválida!");
+                    pausar();
             }
         }
     }
     
     private static void lerDocumento() {
-        System.out.print("Digite o número do documento: ");
+        limparTela();
+        GerenciadorDocumentos.listarDocumentos(usuarioLogado);
+        System.out.print("\n Digite o número do documento: ");
         int numero = scanner.nextInt();
         scanner.nextLine();
+        System.out.println();
         GerenciadorDocumentos.lerDocumento(usuarioLogado, numero);
+        pausar();
     }
     
     private static void editarDocumento() {
-        System.out.print("Digite o número do documento para editar: ");
+        limparTela();
+        GerenciadorDocumentos.listarDocumentos(usuarioLogado);
+        System.out.print("\n Digite o número do documento para editar: ");
         int numero = scanner.nextInt();
         scanner.nextLine();
+        System.out.println();
         GerenciadorDocumentos.editarDocumento(usuarioLogado, numero, scanner);
+        pausar();
     }
     
     private static void deletarDocumento() {
-        System.out.print("Digite o número do documento para deletar: ");
+        limparTela();
+        GerenciadorDocumentos.listarDocumentos(usuarioLogado);
+        System.out.print("\n Digite o número do documento para deletar: ");
         int numero = scanner.nextInt();
         scanner.nextLine();
+        System.out.println();
         GerenciadorDocumentos.deletarDocumento(usuarioLogado, numero);
+        pausar();
+    }
+    
+    private static void limparTela() {
+        for (int i = 0; i < 50; i++) {
+            System.out.println();
+        }
+    }
+    
+    private static void exibirCabecalho() {
+        System.out.println("╔" + "═".repeat(50) + "╗");
+        System.out.println("║" + centralizarTexto("SISTEMA DE CONTROLE DE DOCUMENTOS", 50) + "║");
+        System.out.println("║" + centralizarTexto("SecureData TI - v1.0", 50) + "║");
+        System.out.println("╚" + "═".repeat(50) + "╝");
+    }
+    
+    private static String centralizarTexto(String texto, int largura) {
+        int espacos = (largura - texto.length()) / 2;
+        String resultado = " ".repeat(espacos) + texto;
+        while (resultado.length() < largura) {
+            resultado += " ";
+        }
+        return resultado;
+    }
+    
+    private static void pausar() {
+        System.out.print("\n  Pressione ENTER para continuar...");
+        scanner.nextLine();
     }
 }
